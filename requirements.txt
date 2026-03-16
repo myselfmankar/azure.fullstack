@@ -1,2 +1,4 @@
 Flask
 uvicorn
+azure-cosmos
+python-dotenv
