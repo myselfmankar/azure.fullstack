@@ -1,54 +1,84 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Cloud Assignment</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FullStack</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
-    <h2>Cloud Computing Assignment</h2>
+    <!-- Main Page -->
+    <main class="page">
 
-    <!-- Create Form -->
-    <form action="/save" method="post" style="margin-bottom: 20px;">
-        <input type="text" name="name" placeholder="Enter name" required>
-        <button type="submit">Add User</button>
-    </form>
+        <!-- Page Title -->
+        <div class="page-header">
+            <h1>User Management</h1>
+            <p>Connected to Azure Cosmos DB &mdash; <strong>cloudDB</strong> &rsaquo; <strong>users</strong></p>
+        </div>
 
-    <!-- Read/Update/Delete Table -->
-    <table border="1" cellpadding="5" cellspacing="0">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-            <tr>
-                <td>{{ user[0] }}</td>
-                <td>
-                    <!-- Update Form Inline -->
-                    <form action="/update/{{ user[0] }}" method="post" style="display:inline;">
-                        <input type="text" name="name" value="{{ user[1] }}" required>
-                        <button type="submit">Update</button>
-                    </form>
-                </td>
-                <td>
-                    <!-- Delete Form -->
-                    <form action="/delete/{{ user[0] }}" method="post" style="display:inline;"
-                        onsubmit="return confirm('Delete user?');">
-                        <button type="submit">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="3">No users found.</td>
-            </tr>
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <ul class="flash-list">
+            {% for category, message in messages %}
+            <li class="flash {{ category }}">{{ message }}</li>
             {% endfor %}
-        </tbody>
-    </table>
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Add User Card -->
+        <div class="card">
+            <div class="card-header">Add New User</div>
+            <form action="/save" method="post" class="add-form">
+                <input type="text" name="name" placeholder="Enter user name…" required autocomplete="off">
+                <button type="submit" class="btn btn-primary">+ Add User</button>
+            </form>
+        </div>
+
+        <!-- Users Table Card -->
+        <div class="card">
+            <div class="card-header">All Users ({{ users | length }})</div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sr. No.</th>
+                            <th>Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td style="text-align:center; font-weight:600; color:var(--text-muted);">{{ loop.index }}
+                            </td>
+                            <td>
+                                <form action="/update/{{ user[0] }}" method="post" class="update-row">
+                                    <input type="text" name="name" value="{{ user[1] }}" required autocomplete="off">
+                                    <button type="submit" class="btn btn-success">Update</button>
+                                </form>
+                            </td>
+                            <td class="action-cell">
+                                <form action="/delete/{{ user[0] }}" method="post"
+                                    onsubmit="return confirm('Delete user \'{{ user[1] }}\'?');">
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr class="empty-row">
+                            <td colspan="3">No users found. Add one above to get started.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
 </body>
 
 </html>
